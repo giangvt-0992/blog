@@ -29,7 +29,7 @@ Route::group(['namespace'=>'Web'], function(){
             Route::get('/{id?}/edit','PostController@edit')->name('edit');
             Route::post('/{id?}/edit','PostController@update');
             Route::post('/{id?}/delete','PostController@destroy')->name('delete');
-            Route::post('/{id?}/publish','PostController@publish')->name('publish');
+            Route::get('/{id?}/publish','PostController@publish')->name('publish');
         });
         // Route::get('/', 'PostController@index')->name('index')->middleware('auth');
         // Route::get('/create', 'PostController@create')->name('create')->middleware('auth');

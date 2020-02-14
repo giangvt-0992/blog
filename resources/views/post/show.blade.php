@@ -13,9 +13,10 @@
             <div class="card-body">
                 <p> <strong>Status</strong>: {{ $post->status ? 'Pending' : 'Answered' }}</p>
                 <p> {{ $post->content }} </p>
-                <a href="{{ action('PostController@edit', $post->id) }}" class="btn btn-info">Edit</a>
+                <p>Tags: @foreach($tags as $tag) <a href="#">#{{$tag->name}}</a> @endforeach</p> 
+                <a href="{{ action('Web\PostController@edit', $post->id) }}" class="btn btn-info">Edit</a>
                 @if($post->status == 1)
-                <form method="post" action="{{ action('PostController@destroy', $post->id) }}" class="float-left">
+                <form method="post" action="{{ action('Web\PostController@destroy', $post->id) }}" class="float-left">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div>
                         <button type="submit" class="btn btn-warning">Delete</button>
@@ -45,7 +46,7 @@
                             {{$user_comment->name}}
                             @if($user->id == $user_comment->id) <span class="float-right"> <a href="{{route('comment.delete', ['id' => $comment->id])}}">Delete</a> </span>  @endif
                         @else
-                        Ho bao cao chon
+                        Anonymous
                         @endif
                         
                         </h6>
@@ -59,6 +60,7 @@
                 </div>
                 
             </div>
+            
         @if($post->status)
         <div class="card mt-3">
             <form method="post" action="/comment">

@@ -13,7 +13,11 @@
                     @foreach ($errors->all() as $error)
                         <p class="alert alert-danger">{{ $error }}</p>
                     @endforeach
-
+                    @if (session('status'))
+                        <div class="alert alert-danger">
+                            {{ session('status') }}
+                        </div>
+                    @endif
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="email" class="col-lg-12 control-label">Email</label>
@@ -28,9 +32,11 @@
                             <input type="password" class="form-control"  name="password">
                         </div>
                     </div>
-                    <div class="form-group">
-                        {{-- <label for="password" class="col-lg-12 control-label">Password</label> --}}
-                        <input type="checkbox" type="checkbox" name="remember_me"> remember me
+                    <div class="form-group form-check">
+                        <div class="col-lg-10 col-lg-offset-2">
+                        <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                        <label class="form-check-label" for="remember_me">Remember Me</label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="col-lg-10 col-lg-offset-2">

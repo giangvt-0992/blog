@@ -12,6 +12,9 @@
             </li>
             @if(Auth::check())
             <li class="nav-item">
+                <a class="nav-link" href="{{route('post.index')}}">Activity Histories</a>
+            </li>
+            <li class="nav-item">
                 <div class="dropdown show">
                     <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        {{Auth::user()->name}}

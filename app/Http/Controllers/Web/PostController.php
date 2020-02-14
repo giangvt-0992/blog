@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Model\Post;
+use App\Model\Role_Permission;
+use App\Model\Tag;
+use App\Model\Taggable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate as FacadesGate;
@@ -29,7 +32,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('post.create');
+        $tags = Tag::all();
+        return view('post.create', compact('tags'));
     }
 
     /**
@@ -38,15 +42,25 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(PostRequest $request)
     {
-        $data = request()->Post;
+        $post = $request->Post;
+        $tags = $request->tags;
         $post = new Post(array(
-            'title' => $data['title'],
-            'content' => $data['content'],
+            'title' => $post['title'],
+            'content' => $post['content'],
             'user_id' => Auth::user()->id
         ));
         $post->save();
+        $array = array();
+        foreach($tags as $tag){
+            $array[] = [
+                'tag_id' => $tag,
+                'taggable_type' => 'App\Model\Post',
+                'taggable_id' => $post->id
+            ];
+        }
+        Taggable::insert($array);
         return redirect()->route('post.index');
     }
 
@@ -60,7 +74,10 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $comments = $post->comments()->where('status', 1)->get();
-        return view('post.show', compact('post', 'comments'));
+        $tags = $post->tags;
+        // print_r($tags);
+        // exit();
+        return view('post.show', compact('post', 'comments', 'tags'));
     }
 
     /**
@@ -122,11 +139,12 @@ class PostController extends Controller
     public function destroy($id)
     {
         $user = Auth::user();
-        $post = Post::whereId($id)->firstOrFail();
-        
+        $post = Post::find($id);
+
         if($user->can('delete', $post)){
-            $post->status = 0;
-            $post->save();
+            // $post->status = 0;
+            // $post->save();
+            $post->delete();
             return redirect()->route('post.index');
         }else{
             return "Ban khong the xoa bai viet nay";

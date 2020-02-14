@@ -34,7 +34,17 @@
                                 <span class="help-block">Feel free to ask us any question.</span>
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            <div class="col-lg-10">
+                            <label for="select_tags">Example select</label>
+                                <select class="form-control select2" id="select_tags" name="tags[]" multiple>
+                                    @foreach ($tags as $tag)
+                                        <option value="{{$tag->id}}">{{$tag->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                        </div>
                         <div class="form-group">
                             <div class="col-lg-10 col-lg-offset-2">
                                 <button class="btn btn-default">Cancel</button>
@@ -46,4 +56,9 @@
             </div>
         </div>
     </div>
+@endsection
+@section('after-scripts')
+    <script>
+        $(".select2").select2();
+    </script>
 @endsection

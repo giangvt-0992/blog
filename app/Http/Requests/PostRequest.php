@@ -24,17 +24,20 @@ class PostRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'=> 'required|min:3',
-            'content' => 'required|min:10'
+            'Post.title'=> 'required|min:3',
+            'Post.content' => 'required|min:10',
+            'tags' => 'required'
         ];
     }
 
     public function messages()
     {
         return [
-            'title.required'=> 'Bai viet phai co tieu de',
-            'title.min'=> 'Tieu de bai viet phai co do dai lon hon 3 ky tu',
-            'content' => 'required|min:10'
+            'Post.title.required'=> 'Bai viet phai co tieu de',
+            'Post.title.min'=> 'Tieu de bai viet phai co do dai lon hon 3 ky tu',
+            'Post.content.required' => 'Xin moi nhap noi dung bai viet',
+            'Post.content.required' => 'Noi dung bai viet phai dai hon 10 ky tu',
+            'tags.required' => 'Xin moi nhap noi dung bai viet'
         ];
     }
 }

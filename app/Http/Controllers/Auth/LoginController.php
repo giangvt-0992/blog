@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -39,11 +40,11 @@ class LoginController extends Controller
     }
 
     public function login(){
-        $email = request()->email;
-        $password = request()->password;
-        $remember_me = request()->remember_me;
+        $remember_me = isset(request()->remember_me) ? true : false;
         $credential = request()->only(['email', 'password']);
-        // Auth::attemp($credential, )
-        return $remember_me;
+        if(Auth::guard('web')->attempt($credential, $remember_me)){
+            return redirect($this->redirectTo);
+        }
+        return redirect()->back()->with('status', 'Username or Password is invalid!');
     }
 }
