@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
-use App\Comment;
+use App\Http\Controllers\Controller;
+use App\Model\Comment;
 use App\Http\Requests\CommentFormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
