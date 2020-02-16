@@ -36,7 +36,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-lg-10">
-                            <label for="select_tags">Example select</label>
+                            <label for="select_tags">Hash Tags</label>
                                 <select class="form-control select2" id="select_tags" name="tags[]" multiple>
                                     @foreach ($tags as $tag)
                                         <option value="{{$tag->id}}">{{$tag->name}}</option>

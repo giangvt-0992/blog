@@ -48,6 +48,10 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         //
+        $posts = $tag->posts()->with(['comments', 'comments.user:id,name', 'user:id,name'])->get();
+        
+        $tickets = $tag->tickets()->with(['comments', 'comments.user:id,name', 'user:id,name'])->get();
+        return view('tag.show', compact(['posts', 'tickets']));
     }
 
     /**

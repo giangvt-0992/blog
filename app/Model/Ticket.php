@@ -8,6 +8,8 @@ class Ticket extends Model
 {
     //
     protected $table = "tickets";
+    protected $fillable = ['title', 'content', 'status', 'user_id'];
+    protected $guarded = ['id'];
     
     public function comments()
     {

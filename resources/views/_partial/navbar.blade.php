@@ -10,6 +10,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{route('post.index')}}">Post</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('ticket.index')}}">Ticket</a>
+            </li>
             @if(Auth::check())
             <li class="nav-item">
                 <a class="nav-link" href="{{route('post.index')}}">Activity Histories</a>

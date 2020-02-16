@@ -7,26 +7,26 @@
     <div class="container col-md-8 col-md-offset-2 mt-5">
         <div class="card">
             <div class="card-header ">
-                <h5 class="float-left">{{ $post->title }}</h5>
+                <h5 class="float-left">{{ $ticket->title }}</h5>
                 <div class="clearfix"></div>
             </div>
             <div class="card-body">
-                <p> <strong>Status</strong>: {{ $post->status ? 'Pending' : 'Answered' }}</p>
-                <p> {{ $post->content }} </p>
-                <p>Tags: @foreach($tags as $tag) <a href="{{route('tag.show', $tag->name)}}">#{{$tag->name}}</a> @endforeach</p> 
-                <a href="{{ action('Web\PostController@edit', $post->id) }}" class="btn btn-info">Edit</a>
-                @if($post->status == 1)
-                <form method="post" action="{{ action('Web\PostController@destroy', $post->id) }}" class="float-left">
+                <p> <strong>Status</strong>: {{ $ticket->status ? 'Pending' : 'Answered' }}</p>
+                <p> {{ $ticket->content }} </p>
+                <p>Tags: @foreach($list_tagged as $tag) <a href="{{route('tag.show', $tag->name)}}">#{{$tag->name}}</a> @endforeach</p> 
+                <a href="{{ action('Web\TicketController@edit', $ticket->id) }}" class="btn btn-info">Edit</a>
+                @if($ticket->status == 1)
+                <form method="post" action="{{ action('Web\TicketController@destroy', $ticket->id) }}" class="float-left">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div>
-                        <button type="submit" class="btn btn-warning">Delete</button>
+                        <button type="submit" class="btn btn-warning confirm-before-delete">Delete</button>
                     </div>
                 </form>
                 @else
-                <a href="{{ route('post.publish', $post->id) }}" class="btn btn-primary">Publish</a>
+                <a href="{{ route('ticket.publish', $ticket->id) }}" class="btn btn-primary">Publish</a>
                 @endif
                 <div class="clearfix"></div>
-                {{-- <a href="{{ action('postsController@destroy', $post->slug) }}" class="btn btn-info">Delete</a> --}}
+                {{-- <a href="{{ action('postsController@destroy', $ticket->slug) }}" class="btn btn-info">Delete</a> --}}
             </div>
         </div>
         <?php $user = Auth::user(); ?>
@@ -42,9 +42,8 @@
                         <div class="card-header">
                             <h6>
                             @if($comment->user_id != null)
-                            <?php $user_comment = $comment->user()->firstOrFail(); ?>
-                            {{$user_comment->name}}
-                            @if($user->id == $user_comment->id) <span class="float-right"> <a href="{{route('comment.delete', ['id' => $comment->id])}}">Delete</a> </span>  @endif
+                            {{$comment->user->name}}
+                            @if($user->id == $comment->user->id) <span class="float-right"> <a href="{{route('comment.delete', ['id' => $comment->id])}}">Delete</a> </span>  @endif
                         @else
                         Anonymous
                         @endif
@@ -61,10 +60,10 @@
                 
             </div>
             
-        @if($post->status)
+        @if($ticket->status)
         @include('comment.form', [
-            'commentable_id' => $post->id,
-            'commentable_type' => 'post'
+            'commentable_id' => $ticket->id,
+            'commentable_type' => 'ticket',
         ])
         @endif
     </div>

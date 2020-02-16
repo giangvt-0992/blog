@@ -25,4 +25,6 @@ class Post extends Model
     {
         return $this->morphToMany('App\Model\Tag', 'taggable');
     }
+
+
 }

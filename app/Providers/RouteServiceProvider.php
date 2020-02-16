@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Model\Tag;
+use App\Model\Ticket;
 use App\User;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +41,14 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('user2', function($value){
             return User::where('id', '!=' ,$value)->first() ?? abort(404);
+        });
+
+        Route::bind('tag_name', function($value){
+            return Tag::whereName($value)->first() ?? abort(404);
+        });
+
+        Route::bind('ticket_id', function($value){
+            return Ticket::find($value) ?? abort(404);
         });
     }
 

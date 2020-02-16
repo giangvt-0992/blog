@@ -8,12 +8,18 @@ use App\Model\Post;
 use App\Model\Role_Permission;
 use App\Model\Tag;
 use App\Model\Taggable;
+use App\Repositories\TaggableRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate as FacadesGate;
 
 class PostController extends Controller
 {
+    protected $taggableRepo;
+    public function __construct(TaggableRepository $taggableRepo)
+    {
+        $this->taggableRepo = $taggableRepo;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -44,23 +50,16 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        $post = $request->Post;
+        $data = $request->Post;
         $tags = $request->tags;
         $post = new Post(array(
-            'title' => $post['title'],
-            'content' => $post['content'],
+            'title' => $data['title'],
+            'content' => $data['content'],
             'user_id' => Auth::user()->id
         ));
         $post->save();
-        $array = array();
-        foreach($tags as $tag){
-            $array[] = [
-                'tag_id' => $tag,
-                'taggable_type' => 'App\Model\Post',
-                'taggable_id' => $post->id
-            ];
-        }
-        Taggable::insert($array);
+        $this->taggableRepo->store($tags, $post->id);
+        
         return redirect()->route('post.index');
     }
 
@@ -75,8 +74,6 @@ class PostController extends Controller
         $post = Post::find($id);
         $comments = $post->comments()->where('status', 1)->get();
         $tags = $post->tags;
-        // print_r($tags);
-        // exit();
         return view('post.show', compact('post', 'comments', 'tags'));
     }
 
@@ -88,14 +85,30 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::whereId($id)->firstOrFail();
+        $post = Post::find($id);
+        $list_tagged = $post->tags->pluck('id')->toArray();
+        $tags = Tag::all();
+        $comments = $post->comments()->with('user:id,name')->get();
         if(FacadesGate::check('edit-post', $post)){
-            return view('post.edit', compact('post'));
+            return view('post.edit', compact('post', 'tags', 'list_tagged'));
         }else{
             echo "Ban khong co quyen chinh sua bai viet nay";
         }
         
     }
+    // public function edit($id)
+    // {
+    //     $post = Post::with(['tags:id', 'comments', 'comments.user'])->where('id', $id)->first();
+    //     $list_tagged = $post->tags->toArray();
+    //     $comments = $post->comments;
+    //     $tags = Tag::all();
+    //     if(FacadesGate::check('edit-post', $post)){
+    //         return view('post.edit', compact('post', 'tags', 'list_tagged'));
+    //     }else{
+    //         echo "Ban khong co quyen chinh sua bai viet nay";
+    //     }
+        
+    // }
     
     /**
      * Show the form for editing the specified resource.
@@ -123,10 +136,11 @@ class PostController extends Controller
     {
         
         $post = Post::whereId($id)->firstOrFail();
-        
-        $post->title = $request->title;
-        $post->content = $request->content;
+        $tags = $request->tags;
+        $post->title = $request->Post['title'];
+        $post->content = $request->Post['content'];
         $post->save();
+        $post->tags()->sync($tags);
         return redirect()->back()->with('status', 'Cap nhat bai viet thanh cong' );
     }
 
@@ -142,8 +156,7 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if($user->can('delete', $post)){
-            // $post->status = 0;
-            // $post->save();
+            
             $post->delete();
             return redirect()->route('post.index');
         }else{
