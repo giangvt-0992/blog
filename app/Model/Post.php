@@ -26,5 +26,14 @@ class Post extends Model
         return $this->morphToMany('App\Model\Tag', 'taggable');
     }
 
+    public function action()
+    {
+        return $this->morphOne('App\Model\Action', 'actionable');
+    }
 
+    public function events()
+    {
+        return $this->morphMany('App\Model\Event', 'eventable');
+    }
+    
 }

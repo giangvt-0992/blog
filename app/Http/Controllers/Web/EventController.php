@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Model\Event;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -16,7 +16,9 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $events = $user->event_creators()->with(['action:id,actionable_type,actionable_id', 'action.actionable:id', 'creator:id,name'])->orderBy('updated_at', 'DESC')->get();
+        return view('activity.index', compact(['events']));
     }
 
     /**

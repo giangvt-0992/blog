@@ -2,7 +2,7 @@
 @section('title', 'View a post')
 @section('content')
 <?php 
-
+use Illuminate\Support\Facades\Config;
 ?>
     <div class="container col-md-8 col-md-offset-2 mt-5">
         <div class="card">
@@ -64,7 +64,7 @@
         @if($post->status)
         @include('comment.form', [
             'commentable_id' => $post->id,
-            'commentable_type' => 'post'
+            'commentable_type' => \Config::get('constants.post.commentable_type')
         ])
         @endif
     </div>

@@ -8,17 +8,33 @@ use App\Model\Post;
 use App\Model\Role_Permission;
 use App\Model\Tag;
 use App\Model\Taggable;
+use App\Repositories\ActionRepository;
+use App\Repositories\EventRepository;
+use App\Repositories\PostRepository;
 use App\Repositories\TaggableRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate as FacadesGate;
 
 class PostController extends Controller
 {
     protected $taggableRepo;
-    public function __construct(TaggableRepository $taggableRepo)
+    protected $actionRepo;
+    protected $eventRepo;
+    protected $postRepo;
+
+    public function __construct(
+        TaggableRepository $taggableRepo, 
+        ActionRepository $actionRepo,
+        EventRepository $eventRepo,
+        PostRepository $postRepo
+        )
     {
         $this->taggableRepo = $taggableRepo;
+        $this->actionRepo = $actionRepo;
+        $this->eventRepo = $eventRepo;
+        $this->postRepo = $postRepo;
     }
     /**
      * Display a listing of the resource.
@@ -50,16 +66,8 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        $data = $request->Post;
-        $tags = $request->tags;
-        $post = new Post(array(
-            'title' => $data['title'],
-            'content' => $data['content'],
-            'user_id' => Auth::user()->id
-        ));
-        $post->save();
-        $this->taggableRepo->store($tags, $post->id);
         
+        $this->postRepo->createPost($request);
         return redirect()->route('post.index');
     }
 
@@ -134,13 +142,7 @@ class PostController extends Controller
      */
     public function update(PostRequest $request, $id)
     {
-        
-        $post = Post::whereId($id)->firstOrFail();
-        $tags = $request->tags;
-        $post->title = $request->Post['title'];
-        $post->content = $request->Post['content'];
-        $post->save();
-        $post->tags()->sync($tags);
+        $this->postRepo->updatePost($request, $id);
         return redirect()->back()->with('status', 'Cap nhat bai viet thanh cong' );
     }
 
@@ -156,8 +158,7 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if($user->can('delete', $post)){
-            
-            $post->delete();
+            $this->postRepo->deletePost($post);
             return redirect()->route('post.index');
         }else{
             return "Ban khong the xoa bai viet nay";

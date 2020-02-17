@@ -28,4 +28,9 @@ class Comment extends Model
         // a comment has a morph action
         return $this->morphOne('App\Model\Action', 'actionable');
     }
+
+    public function events()
+    {
+        return $this->morphMany('App\Model\Event', 'eventable');
+    }
 }

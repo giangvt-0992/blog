@@ -13,9 +13,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{route('ticket.index')}}">Ticket</a>
             </li>
+            <li>
+            <a href="">{{$count}}</a>
+            </li>
             @if(Auth::check())
             <li class="nav-item">
-                <a class="nav-link" href="{{route('post.index')}}">Activity Histories</a>
+                <a class="nav-link" href="{{route('activity.index')}}">Activity Histories</a>
             </li>
             <li class="nav-item">
                 <div class="dropdown show">
