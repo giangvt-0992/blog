@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,11 +25,17 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Using class based composers...
-
-        // Using Closure based composers...
+        // $news = $this->getNewFeed();
+        
         View::composer('_partial.navbar', function ($view) {
-            $view->with('count', 11);
+            $news = [];
+            if(Auth::check()){
+                $user = Auth::user();
+                $news = $user->event_owners()->with(['action:id,actionable_type,actionable_id', 'action.actionable:id', 'creator:id,name'])->orderBy('updated_at', 'DESC')->get();
+            }
+
+            $view->with('news', $news);
         });
     }
+
 }

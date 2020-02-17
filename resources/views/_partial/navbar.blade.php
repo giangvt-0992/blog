@@ -1,3 +1,40 @@
+
+<?php 
+$noti = "";
+$count = 0;
+foreach ($news as $event){
+    if($event->creator_id != $event->owner_id){
+        $count++;
+    
+    
+ 
+    
+    $message = isset($event->creator) ? $event->creator->name : 'Bạn nữ giấu tên';
+    $message .=  " đã ";
+    $route = "#";
+    switch ($event->eventable_type) {
+        case \Config::get('constants.type.post.key') :
+            $route = route( 'post.show', ['id' => $event->eventable_id]); 
+            if($event->action->actionable_type == 'App\Model\Comment'){
+                $message = $message . "bình luận về " . \Config::get("constants.model.$event->eventable_type") . " của ban";
+            }
+            break;
+        case \Config::get('constants.type.ticket.key') :
+            $route = route( 'ticket.show', ['id' => $event->eventable_id]); 
+            if($event->action->actionable_type == 'App\Model\Comment'){
+                $message = $message . "bình luận về " . \Config::get("constants.model.$event->eventable_type") . " của ban";
+            }
+        case \Config::get('constants.type.comment.key') :
+            $message = "trả lời bình luận của ...";
+            break;
+        default:
+            break;
+    }
+    $noti .= "<a class='dropdown-item'" . "href='" . $route ."'>$message</a>";
+    
+}
+}
+?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="{{route('index')}}">Blog</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,12 +50,22 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{route('ticket.index')}}">Ticket</a>
             </li>
-            <li>
-            <a href="">{{$count}}</a>
-            </li>
+            
             @if(Auth::check())
             <li class="nav-item">
                 <a class="nav-link" href="{{route('activity.index')}}">Activity Histories</a>
+            </li>
+            <li class="nav-item">
+                <div class="dropdown show">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{$count}} <i class="fas fa-bell"></i>
+                    </a>
+                  
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <?php print_r($noti); ?>
+                        
+                    </div>
+                  </div>
             </li>
             <li class="nav-item">
                 <div class="dropdown show">

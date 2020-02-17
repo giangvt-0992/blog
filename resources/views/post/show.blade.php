@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Config;
                             @if($comment->user_id != null)
                             <?php $user_comment = $comment->user()->firstOrFail(); ?>
                             {{$user_comment->name}}
-                            @if($user->id == $user_comment->id) <span class="float-right"> <a href="{{route('comment.delete', ['id' => $comment->id])}}">Delete</a> </span>  @endif
+                            @if( isset($user) && $user->id == $user_comment->id) <span class="float-right"> <a href="{{route('comment.delete', ['id' => $comment->id])}}">Delete</a> </span>  @endif
                         @else
                         Anonymous
                         @endif
