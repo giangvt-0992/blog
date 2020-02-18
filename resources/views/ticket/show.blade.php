@@ -2,7 +2,7 @@
 @section('title', 'View a post')
 @section('content')
 <?php 
-
+use Illuminate\Support\Facades\Config;
 ?>
     <div class="container col-md-8 col-md-offset-2 mt-5">
         <div class="card">
@@ -29,7 +29,9 @@
                 {{-- <a href="{{ action('postsController@destroy', $ticket->slug) }}" class="btn btn-info">Delete</a> --}}
             </div>
         </div>
-        <?php $user = Auth::user(); ?>
+        <?php 
+        $user = Auth::user(); 
+        ?>
         
             
             <div class="card mt-3">
@@ -63,7 +65,7 @@
         @if($ticket->status)
         @include('comment.form', [
             'commentable_id' => $ticket->id,
-            'commentable_type' => 'ticket',
+            'commentable_type' => \Config::get('constants.ticket.commentable_type')
         ])
         @endif
     </div>

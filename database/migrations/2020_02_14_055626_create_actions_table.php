@@ -19,6 +19,7 @@ class CreateActionsTable extends Migration
             $table->text('content');
             $table->string('actionable_type');
             $table->bigInteger('actionable_id');
+            $table->unique(['actionable_type', 'actionable_id']);
             $table->timestamps();
         });
     }

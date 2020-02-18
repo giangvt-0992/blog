@@ -60,14 +60,14 @@ class User extends Authenticatable
     
     public function event_creators()
     {
-        // an user has manyi reaction
+        // an user has many event
         return $this->hasMany('App\Model\Event', 'creator_id');
         # code...
     }
 
     public function event_owners()
     {
-        // an user has manyi reaction
+        // an user has many event attemp to
         return $this->hasMany('App\Model\Event', 'owner_id');
         # code...
     }

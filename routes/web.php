@@ -48,6 +48,6 @@ Route::group(['namespace'=>'Web'], function(){
     Route::post('/comment','CommentController@create');
     Route::get('/comment/{id?}/delete','CommentController@destroy')->name('comment.delete');
     
-
+    Route::get('/activities', 'EventController@index')->name('activity.index');
     
 });

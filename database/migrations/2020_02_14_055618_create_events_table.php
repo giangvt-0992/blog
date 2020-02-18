@@ -19,7 +19,7 @@ class CreateEventsTable extends Migration
             $table->bigInteger('eventable_id');
             $table->bigInteger('owner_id');
             $table->bigInteger('creator_id');
-            $table->bigInteger('action_id');
+            $table->bigInteger('action_id')->unique();
             $table->timestamps();
         });
     }
