@@ -40,6 +40,7 @@ class CommentRepository
         return $this->eventRepo->store($data_event);
     }
 
+    
     public function storeComment($data)
     {   
         
@@ -48,7 +49,6 @@ class CommentRepository
             'content' => $data['content'],
             'user_id' => $creator == null ? null : $creator->id,
         ]);
-        
         DB::transaction(function() use ($comment, $creator, $data){
             $eventable_type = "";
             switch ($data['commentable_type']) {

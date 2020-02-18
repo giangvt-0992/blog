@@ -18,7 +18,8 @@ class EventController extends Controller
     {
         $user = Auth::user();
         $events = $user->event_creators()->with(['action:id,actionable_type,actionable_id', 'action.actionable:id', 'creator:id,name'])->orderBy('updated_at', 'DESC')->get();
-        return view('activity.index', compact(['events']));
+        
+        return view('activity.index', compact(['events']));     
     }
 
     /**

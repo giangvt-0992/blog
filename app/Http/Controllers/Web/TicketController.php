@@ -6,11 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TicketRequest;
 use App\Model\Tag;
 use App\Model\Ticket;
+use App\Repositories\TagRepository;
+use App\Repositories\TicketRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
+    protected $ticketRepo, $tagRepo;
+
+    public function __construct(TicketRepository $ticketRepo, TagRepository $tagRepo)
+    {
+        $this->ticketRepo = $ticketRepo;
+        $this->tagRepo = $tagRepo;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,9 +28,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        //
         $tickets = Auth::user()->tickets;
-        // $tickets = $user->tickets;
         return view('ticket.index', compact('tickets'));
     }
 
@@ -34,7 +42,6 @@ class TicketController extends Controller
         //
         $tags = Tag::all();
         return view('ticket.create', compact('tags'));
-
     }
 
     /**
@@ -48,14 +55,8 @@ class TicketController extends Controller
         //
         $ticket = $request->Ticket;
         $tags = $request->tags;
-        $ticket = new Ticket([
-            'title' => $ticket['title'],
-            'content' => $ticket['content'],
-            'user_id' => Auth::user()->id,
-        ]);
-        $ticket->save();
-        $ticket->tags()->attach($tags);
-        return 1;
+        $this->ticketRepo->store($ticket, $tags);
+        return redirect()->route('ticket.index')->with('status', 'The ticket has been created');
     }
 
     /**
@@ -64,20 +65,10 @@ class TicketController extends Controller
      * @param  \App\Ticket  $ticket
      * @return \Illuminate\Http\Response
      */
-    // public function show(Ticket $ticket)
-    // {
-    //     //
-    //     // $data = $ticket->with('tags', 'comments', 'comments.user')->firstOrFail();
-    //     $list_tagged = $ticket->tags;
-    //     $comments = $ticket->comments;
-    //     return view('ticket.show', compact(['ticket', 'list_tagged', 'comments']));
-    // }
     public function show(Ticket $ticket)
     {
-        //
-        $data = $ticket->with('tags', 'comments', 'comments.user:id,name')->firstOrFail();
-        $list_tagged = $data->tags;
-        $comments = $data->comments;
+        $list_tagged = $ticket->tags;
+        $comments = $ticket->comments()->with('user:id,name')->get();
         return view('ticket.show', compact(['ticket', 'list_tagged', 'comments']));
     }
 
@@ -90,9 +81,15 @@ class TicketController extends Controller
     public function edit(Ticket $ticket)
     {
         //
-        $tags = Tag::all();
+        $user = Auth::user();
+        if($user->cant('update', $ticket)){
+            abort(404);
+        }
+
+        $tags = $this->tagRepo->getAll();
         $list_tagged = $ticket->tags->pluck('id')->toArray();
         return view('ticket.edit', compact(['tags' , 'list_tagged', 'ticket']));
+        
     }
 
     /**
@@ -104,13 +101,13 @@ class TicketController extends Controller
      */
     public function update(TicketRequest $request, Ticket $ticket)
     {
+        $user = Auth::user();
+        if($user->cant('update', $ticket)){
+            abort(404);
+        }
         $data = $request->Ticket;
         $tags = $request->tags;
-        $ticket->title = $data['title'];
-        $ticket->status = $data['content'];
-        $ticket->status = isset($data['status'])?0:1;
-        $ticket->save();
-        $ticket->tags()->sync($tags);
+        $this->ticketRepo->update($ticket, $data, $tags);
         return redirect()->route('ticket.index')->with('status', 'Cap nhat bai viet thanh cong');
 
     }

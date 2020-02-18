@@ -22,12 +22,18 @@ use Illuminate\Support\Facades\Config;
                                 $message = $message . "đăng tải một" . " <a href='" . route('post.show', $event->eventable_id) . "'> " . \Config::get('constants.type.post.value') . ' </a>';
                             }else{
                                 if($event->action->actionable_type == 'App\Model\Comment'){
-                                    $message = $message . "bình luận về " . "<a href='" . route('post.show', $event->eventable_id) . "'> " . \Config::get("constants.model.$event->eventable_type") . '</a>' . " của " . (($event->owner_id==$event->creator_id)?"chính mình.":$event->creator->name);
+                                    $message = $message . "bình luận về " . "<a href='" . route('post.show', $event->eventable_id) . "'> " . \Config::get("constants.model.$event->eventable_type") . '</a>' . " của " . (($event->owner_id==$event->creator_id)?"chính mình.":$event->owner->name);
                                 }
                             }
                             break;
                         case \Config::get('constants.type.ticket.key') :
-                            $message = $message . "đăng tải một" . " <a href='" . route('post.show', $event->eventable_id) . "'> " . \Config::get('constants.type.ticket.value') . ' </a>';
+                            if($event->eventable_type == $event->action->actionable_type){
+                                $message = $message . "đăng tải một" . " <a href='" . route('ticket.show', $event->eventable_id) . "'> " . \Config::get('constants.type.ticket.value') . ' </a>';
+                            }else{
+                                if($event->action->actionable_type == 'App\Model\Comment'){
+                                    $message = $message . "bình luận về " . "<a href='" . route('ticket.show', $event->eventable_id) . "'> " . \Config::get("constants.model.$event->eventable_type") . '</a>' . " của " . (($event->owner_id==$event->creator_id)?"chính mình.":$event->owner->name);
+                                }
+                            }
                             break;
                         case \Config::get('constants.type.comment.key') :
                             $message = "trả lời bình luận của ...";

@@ -43,7 +43,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::where([['user_id', Auth::user()->id]])->get();
+        $user = Auth::user();
+        $posts = $user->posts()->get();
         return view('post.index', compact('posts'));
     }
 

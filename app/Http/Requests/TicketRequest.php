@@ -37,7 +37,7 @@ class TicketRequest extends FormRequest
             'Ticket.title.min'=> 'Tieu de bai viet phai co do dai lon hon 3 ky tu',
             'Ticket.content.required' => 'Xin moi nhap noi dung bai viet',
             'Ticket.content.required' => 'Noi dung bai viet phai dai hon 10 ky tu',
-            'tags.required' => 'Xin moi nhap noi dung bai viet'
+            'tags.required' => 'Xin moi chon hash tag cho bai viet'
         ];
     }
 }
